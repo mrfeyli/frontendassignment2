@@ -1,142 +1,94 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>HR Attrition Predictor</title>
-  <style>
-    body {
-      font-family: Arial;
-      background: #f5f5f5;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-    }
-    form {
-      max-width: 600px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-    }
-    input, select {
-      width: 100%;
-      padding: 8px;
-      margin: 5px 0 15px;
-    }
-    button {
-      padding: 10px;
-      width: 48%;
-      margin-right: 2%;
-      cursor: pointer;
-    }
-    #result {
-      margin-top: 20px;
-      text-align: center;
-      font-size: 18px;
-    }
-  </style>
-</head>
-<body>
+import streamlit as st
+import requests
 
-<h1>HR Attrition Prediction</h1>
+st.title("HR Attrition Prediction")
 
-<form id="predictionForm">
+# -------- INPUT FORM --------
+st.header("Employee Information")
 
-  <!-- NUMERISKA -->
-  <input type="number" placeholder="Age" id="Age" required>
-  <input type="number" placeholder="DailyRate" id="DailyRate" required>
-  <input type="number" placeholder="DistanceFromHome" id="DistanceFromHome" required>
-  <input type="number" placeholder="HourlyRate" id="HourlyRate" required>
-  <input type="number" placeholder="MonthlyIncome" id="MonthlyIncome" required>
-  <input type="number" placeholder="MonthlyRate" id="MonthlyRate" required>
-  <input type="number" placeholder="NumCompaniesWorked" id="NumCompaniesWorked" required>
-  <input type="number" placeholder="PercentSalaryHike" id="PercentSalaryHike" required>
-  <input type="number" placeholder="TotalWorkingYears" id="TotalWorkingYears" required>
-  <input type="number" placeholder="TrainingTimesLastYear" id="TrainingTimesLastYear" required>
-  <input type="number" placeholder="YearsAtCompany" id="YearsAtCompany" required>
-  <input type="number" placeholder="YearsInCurrentRole" id="YearsInCurrentRole" required>
-  <input type="number" placeholder="YearsSinceLastPromotion" id="YearsSinceLastPromotion" required>
-  <input type="number" placeholder="YearsWithCurrManager" id="YearsWithCurrManager" required>
+# Numeriska
+Age = st.number_input("Age", 18, 65)
+DailyRate = st.number_input("Daily Rate")
+DistanceFromHome = st.number_input("Distance From Home")
+HourlyRate = st.number_input("Hourly Rate")
+MonthlyIncome = st.number_input("Monthly Income")
+MonthlyRate = st.number_input("Monthly Rate")
+NumCompaniesWorked = st.number_input("Num Companies Worked")
+PercentSalaryHike = st.number_input("Percent Salary Hike")
+TotalWorkingYears = st.number_input("Total Working Years")
+TrainingTimesLastYear = st.number_input("Training Times Last Year")
+YearsAtCompany = st.number_input("Years At Company")
+YearsInCurrentRole = st.number_input("Years In Current Role")
+YearsSinceLastPromotion = st.number_input("Years Since Last Promotion")
+YearsWithCurrManager = st.number_input("Years With Current Manager")
 
-  <!-- KATEGORISKA -->
-  <input type="text" placeholder="BusinessTravel" id="BusinessTravel" required>
-  <input type="text" placeholder="Department" id="Department" required>
-  <input type="number" placeholder="Education" id="Education" required>
-  <input type="text" placeholder="EducationField" id="EducationField" required>
-  <input type="number" placeholder="EnvironmentSatisfaction" id="EnvironmentSatisfaction" required>
-  <input type="text" placeholder="Gender" id="Gender" required>
-  <input type="number" placeholder="JobInvolvement" id="JobInvolvement" required>
-  <input type="text" placeholder="JobRole" id="JobRole" required>
-  <input type="number" placeholder="JobSatisfaction" id="JobSatisfaction" required>
-  <input type="text" placeholder="MaritalStatus" id="MaritalStatus" required>
-  <input type="text" placeholder="OverTime" id="OverTime" required>
-  <input type="number" placeholder="PerformanceRating" id="PerformanceRating" required>
-  <input type="number" placeholder="RelationshipSatisfaction" id="RelationshipSatisfaction" required>
-  <input type="number" placeholder="WorkLifeBalance" id="WorkLifeBalance" required>
+# Kategoriska
+BusinessTravel = st.text_input("Business Travel")
+Department = st.text_input("Department")
+Education = st.number_input("Education")
+EducationField = st.text_input("Education Field")
+EnvironmentSatisfaction = st.number_input("Environment Satisfaction")
+Gender = st.text_input("Gender")
+JobInvolvement = st.number_input("Job Involvement")
+JobRole = st.text_input("Job Role")
+JobSatisfaction = st.number_input("Job Satisfaction")
+MaritalStatus = st.text_input("Marital Status")
+OverTime = st.text_input("Over Time")
+PerformanceRating = st.number_input("Performance Rating")
+RelationshipSatisfaction = st.number_input("Relationship Satisfaction")
+WorkLifeBalance = st.number_input("Work Life Balance")
 
-  <button type="button" onclick="predict('mlp')">Predict MLP</button>
-  <button type="button" onclick="predict('tree')">Predict Tree</button>
-
-</form>
-
-<div id="result"></div>
-
-<script>
-async function predict(modelType) {
-
-  const data = {
-    Age: parseInt(Age.value),
-    BusinessTravel: BusinessTravel.value,
-    DailyRate: parseInt(DailyRate.value),
-    Department: Department.value,
-    DistanceFromHome: parseInt(DistanceFromHome.value),
-    Education: parseInt(Education.value),
-    EducationField: EducationField.value,
-    EnvironmentSatisfaction: parseInt(EnvironmentSatisfaction.value),
-    Gender: Gender.value,
-    HourlyRate: parseInt(HourlyRate.value),
-    JobInvolvement: parseInt(JobInvolvement.value),
-    JobRole: JobRole.value,
-    JobSatisfaction: parseInt(JobSatisfaction.value),
-    MaritalStatus: MaritalStatus.value,
-    MonthlyIncome: parseInt(MonthlyIncome.value),
-    MonthlyRate: parseInt(MonthlyRate.value),
-    NumCompaniesWorked: parseInt(NumCompaniesWorked.value),
-    OverTime: OverTime.value,
-    PercentSalaryHike: parseInt(PercentSalaryHike.value),
-    PerformanceRating: parseInt(PerformanceRating.value),
-    RelationshipSatisfaction: parseInt(RelationshipSatisfaction.value),
-    TotalWorkingYears: parseInt(TotalWorkingYears.value),
-    TrainingTimesLastYear: parseInt(TrainingTimesLastYear.value),
-    WorkLifeBalance: parseInt(WorkLifeBalance.value),
-    YearsAtCompany: parseInt(YearsAtCompany.value),
-    YearsInCurrentRole: parseInt(YearsInCurrentRole.value),
-    YearsSinceLastPromotion: parseInt(YearsSinceLastPromotion.value),
-    YearsWithCurrManager: parseInt(YearsWithCurrManager.value)
-  };
-
-  try {
-    const response = await fetch(`http://localhost:8000/predict/${modelType}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    });
-
-    const result = await response.json();
-
-    document.getElementById("result").innerHTML =
-      `<strong>Prediction:</strong> ${result.prediction}<br>
-       <strong>Probability:</strong> ${result.probability}`;
-
-  } catch (error) {
-    document.getElementById("result").innerText = "Error connecting to API";
-    console.error(error);
-  }
+# -------- DATA --------
+data = {
+    "Age": Age,
+    "BusinessTravel": BusinessTravel,
+    "DailyRate": DailyRate,
+    "Department": Department,
+    "DistanceFromHome": DistanceFromHome,
+    "Education": Education,
+    "EducationField": EducationField,
+    "EnvironmentSatisfaction": EnvironmentSatisfaction,
+    "Gender": Gender,
+    "HourlyRate": HourlyRate,
+    "JobInvolvement": JobInvolvement,
+    "JobRole": JobRole,
+    "JobSatisfaction": JobSatisfaction,
+    "MaritalStatus": MaritalStatus,
+    "MonthlyIncome": MonthlyIncome,
+    "MonthlyRate": MonthlyRate,
+    "NumCompaniesWorked": NumCompaniesWorked,
+    "OverTime": OverTime,
+    "PercentSalaryHike": PercentSalaryHike,
+    "PerformanceRating": PerformanceRating,
+    "RelationshipSatisfaction": RelationshipSatisfaction,
+    "TotalWorkingYears": TotalWorkingYears,
+    "TrainingTimesLastYear": TrainingTimesLastYear,
+    "WorkLifeBalance": WorkLifeBalance,
+    "YearsAtCompany": YearsAtCompany,
+    "YearsInCurrentRole": YearsInCurrentRole,
+    "YearsSinceLastPromotion": YearsSinceLastPromotion,
+    "YearsWithCurrManager": YearsWithCurrManager
 }
-</script>
 
-</body>
-</html>
+# -------- BUTTONS --------
+col1, col2 = st.columns(2)
+
+API_URL = "https://your-backend-url.onrender.com"  # 🔴 ändra denna
+
+if col1.button("Predict MLP"):
+    res = requests.post(f"{API_URL}/predict/mlp", json=data)
+    if res.status_code == 200:
+        result = res.json()
+        st.success(f"Prediction: {result['prediction']}")
+        st.write(f"Probability: {result['probability']}")
+    else:
+        st.error("API error")
+
+if col2.button("Predict Tree"):
+    res = requests.post(f"{API_URL}/predict/tree", json=data)
+    if res.status_code == 200:
+        result = res.json()
+        st.success(f"Prediction: {result['prediction']}")
+        st.write(f"Probability: {result['probability']}")
+    else:
+        st.error("API error")
