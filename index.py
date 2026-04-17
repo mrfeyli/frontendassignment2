@@ -10,7 +10,7 @@ st.write("Fyll i medarbetarens uppgifter nedan för att förutsäga risken för 
 # --- INSTÄLLNINGAR ---
 # Byt ut detta mot din publika FastAPI-URL när du driftar API:et (t.ex. på Render, Heroku etc.)
 # Om du testar lokalt, ha kvar localhost.
-FASTAPI_URL = "http://localhost:8000"
+FASTAPI_URL = "https://13.62.6.30:8000"
 
 # --- FORMULÄR FÖR INPUT ---
 with st.form("prediction_form"):
