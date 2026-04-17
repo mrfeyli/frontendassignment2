@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HR Attrition Predictor</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    form {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0 15px;
+    }
+    button {
+      padding: 10px;
+      width: 48%;
+      margin-right: 2%;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>HR Attrition Prediction</h1>
+
+<form id="predictionForm">
+
+  <!-- NUMERISKA -->
+  <input type="number" placeholder="Age" id="Age" required>
+  <input type="number" placeholder="DailyRate" id="DailyRate" required>
+  <input type="number" placeholder="DistanceFromHome" id="DistanceFromHome" required>
+  <input type="number" placeholder="HourlyRate" id="HourlyRate" required>
+  <input type="number" placeholder="MonthlyIncome" id="MonthlyIncome" required>
+  <input type="number" placeholder="MonthlyRate" id="MonthlyRate" required>
+  <input type="number" placeholder="NumCompaniesWorked" id="NumCompaniesWorked" required>
+  <input type="number" placeholder="PercentSalaryHike" id="PercentSalaryHike" required>
+  <input type="number" placeholder="TotalWorkingYears" id="TotalWorkingYears" required>
+  <input type="number" placeholder="TrainingTimesLastYear" id="TrainingTimesLastYear" required>
+  <input type="number" placeholder="YearsAtCompany" id="YearsAtCompany" required>
+  <input type="number" placeholder="YearsInCurrentRole" id="YearsInCurrentRole" required>
+  <input type="number" placeholder="YearsSinceLastPromotion" id="YearsSinceLastPromotion" required>
+  <input type="number" placeholder="YearsWithCurrManager" id="YearsWithCurrManager" required>
+
+  <!-- KATEGORISKA -->
+  <input type="text" placeholder="BusinessTravel" id="BusinessTravel" required>
+  <input type="text" placeholder="Department" id="Department" required>
+  <input type="number" placeholder="Education" id="Education" required>
+  <input type="text" placeholder="EducationField" id="EducationField" required>
+  <input type="number" placeholder="EnvironmentSatisfaction" id="EnvironmentSatisfaction" required>
+  <input type="text" placeholder="Gender" id="Gender" required>
+  <input type="number" placeholder="JobInvolvement" id="JobInvolvement" required>
+  <input type="text" placeholder="JobRole" id="JobRole" required>
+  <input type="number" placeholder="JobSatisfaction" id="JobSatisfaction" required>
+  <input type="text" placeholder="MaritalStatus" id="MaritalStatus" required>
+  <input type="text" placeholder="OverTime" id="OverTime" required>
+  <input type="number" placeholder="PerformanceRating" id="PerformanceRating" required>
+  <input type="number" placeholder="RelationshipSatisfaction" id="RelationshipSatisfaction" required>
+  <input type="number" placeholder="WorkLifeBalance" id="WorkLifeBalance" required>
+
+  <button type="button" onclick="predict('mlp')">Predict MLP</button>
+  <button type="button" onclick="predict('tree')">Predict Tree</button>
+
+</form>
+
+<div id="result"></div>
+
+<script>
+async function predict(modelType) {
+
+  const data = {
+    Age: parseInt(Age.value),
+    BusinessTravel: BusinessTravel.value,
+    DailyRate: parseInt(DailyRate.value),
+    Department: Department.value,
+    DistanceFromHome: parseInt(DistanceFromHome.value),
+    Education: parseInt(Education.value),
+    EducationField: EducationField.value,
+    EnvironmentSatisfaction: parseInt(EnvironmentSatisfaction.value),
+    Gender: Gender.value,
+    HourlyRate: parseInt(HourlyRate.value),
+    JobInvolvement: parseInt(JobInvolvement.value),
+    JobRole: JobRole.value,
+    JobSatisfaction: parseInt(JobSatisfaction.value),
+    MaritalStatus: MaritalStatus.value,
+    MonthlyIncome: parseInt(MonthlyIncome.value),
+    MonthlyRate: parseInt(MonthlyRate.value),
+    NumCompaniesWorked: parseInt(NumCompaniesWorked.value),
+    OverTime: OverTime.value,
+    PercentSalaryHike: parseInt(PercentSalaryHike.value),
+    PerformanceRating: parseInt(PerformanceRating.value),
+    RelationshipSatisfaction: parseInt(RelationshipSatisfaction.value),
+    TotalWorkingYears: parseInt(TotalWorkingYears.value),
+    TrainingTimesLastYear: parseInt(TrainingTimesLastYear.value),
+    WorkLifeBalance: parseInt(WorkLifeBalance.value),
+    YearsAtCompany: parseInt(YearsAtCompany.value),
+    YearsInCurrentRole: parseInt(YearsInCurrentRole.value),
+    YearsSinceLastPromotion: parseInt(YearsSinceLastPromotion.value),
+    YearsWithCurrManager: parseInt(YearsWithCurrManager.value)
+  };
+
+  try {
+    const response = await fetch(`http://localhost:8000/predict/${modelType}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+
+    document.getElementById("result").innerHTML =
+      `<strong>Prediction:</strong> ${result.prediction}<br>
+       <strong>Probability:</strong> ${result.probability}`;
+
+  } catch (error) {
+    document.getElementById("result").innerText = "Error connecting to API";
+    console.error(error);
+  }
+}
+</script>
+
+</body>
+</html>
