@@ -102,7 +102,7 @@ if submitted:
     with st.spinner("Beräknar..."):
         try:
             # Gör POST-request till din FastAPI-server
-            response = requests.post(f"{FASTAPI_URL}{endpoint}", json=payload)
+            response = requests.post(f"{API_URL}{endpoint}", json=payload)
             
             if response.status_code == 200:
                 result = response.json()
